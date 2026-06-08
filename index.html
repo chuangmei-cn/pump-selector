@@ -579,11 +579,7 @@ function doSelect() {
     analysis += `</div>`;
   }
 
-  // 台数建议
-  if(Q > 200) {
-    const n2 = Math.ceil(Q / 2 / 100) * 2;
-    analysis += `<div style="margin-top:8px;font-size:0.85em;color:#4facfe">大流量建议：可考虑 ${n2} 台泵并联运行，单台流量约 ${(Q/n2).toFixed(0)} m³/h</div>`;
-  }
+
 
   analysisEl.innerHTML = analysis;
 }
