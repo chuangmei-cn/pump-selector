@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>创美水泵选型工具</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:linear-gradient(135deg,#0a1628 0%,#1a2a4a 100%);min-height:100vh;color:#e0e6f0}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.header{text-align:center;padding:30px 0 20px}
+.header h1{font-size:2em;color:#fff;letter-spacing:2px;background:linear-gradient(90deg,#4facfe,#00f2fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .sub{color:#8899bb;margin-top:8px;font-size:0.95em}
+.brand-tag{display:inline-block;background:rgba(79,172,254,0.15);border:1px solid rgba(79,172,254,0.3);border-radius:20px;padding:4px 16px;margin-top:10px;color:#4facfe;font-size:0.85em}
+
+.main-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+@media(max-width:768px){
+  .main-grid{grid-template-columns:1fr}
+  .container{padding:10px}
+  .header h1{font-size:1.4em}
+  .card{padding:16px}
+  .btn{padding:14px;font-size:1em}
+  .form-group input,.form-group select{padding:12px 14px;font-size:16px}
+  .result-card .params{grid-template-columns:repeat(2,1fr)}
+  .form-row{grid-template-columns:1fr}
+}
+
+.card{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:24px}
+.card h2{font-size:1.15em;color:#4facfe;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.08)}
+
+.form-group{margin-bottom:16px}
+.form-group label{display:block;color:#aabbcc;font-size:0.9em;margin-bottom:6px}
+.form-group input,.form-group select{width:100%;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;font-size:0.95em;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none}
+.form-group select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234facfe' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.form-group select option{color:#333;background:#fff}
+.form-group input:focus,.form-group select:focus{border-color:#4facfe}
+.form-group input::placeholder{color:#556677}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.radio-group{display:flex;gap:16px;flex-wrap:wrap}
+.radio-group label{display:flex;align-items:center;gap:6px;color:#aabbcc;cursor:pointer;font-size:0.9em}
+.radio-group input[type="radio"]{accent-color:#4facfe}
+
+.btn{width:100%;padding:12px;background:linear-gradient(135deg,#4facfe,#00c6ff);border:none;border-radius:10px;color:#fff;font-size:1em;font-weight:bold;cursor:pointer;transition:transform .15s,box-shadow .15s;letter-spacing:1px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,172,254,0.3)}
+.btn:active{transform:translateY(0)}
+.btn-secondary{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);margin-top:8px}
+.btn-secondary:hover{box-shadow:0 4px 12px rgba(255,255,255,0.1)}
+
+.result-area{margin-top:20px}
+.result-card{background:rgba(255,255,255,0.04);border:1px solid rgba(79,172,254,0.2);border-radius:12px;padding:16px;margin-bottom:12px;transition:border-color .2s}
+.result-card:hover{border-color:rgba(79,172,254,0.5)}
+.result-card.best{border-color:rgba(0,200,100,0.4);background:rgba(0,200,100,0.05)}
+.result-card h3{color:#4facfe;font-size:1.05em;margin-bottom:8px}
+.result-card.best h3{color:#00e676}
+.result-card .params{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px}
+.result-card .param{text-align:center}
+.result-card .param .val{font-size:1.3em;font-weight:bold;color:#fff}
+.result-card .param .lbl{font-size:0.75em;color:#667788;margin-top:2px}
+.result-card .match-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.78em;font-weight:bold}
+.match-exact{background:rgba(0,200,100,0.2);color:#00e676}
+.match-close{background:rgba(255,193,7,0.2);color:#ffc107}
+.match-fallback{background:rgba(255,82,82,0.2);color:#ff5252}
+
+.calc-section{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06)}
+.calc-section h4{color:#8899bb;font-size:0.85em;margin-bottom:8px}
+.calc-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85em;color:#aabbcc}
+.calc-row span{color:#4facfe;font-weight:bold}
+
+.empty-state{text-align:center;padding:40px 20px;color:#556677}
+.empty-state .icon{font-size:3em;margin-bottom:12px}
+.empty-state p{font-size:0.95em;line-height:1.6}
+
+.warning-box{margin-top:12px;padding:12px;background:rgba(255,152,0,0.08);border:1px solid rgba(255,152,0,0.2);border-radius:8px;color:#ffb74d;font-size:0.85em}
+.warning-box strong{color:#ff9800}
+
+.footer{text-align:center;padding:20px;color:#445566;font-size:0.8em}
+
+.export-bar{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.export-bar .btn{flex:1;min-width:120px;font-size:0.85em;padding:8px}
+
+.info-row{display:flex;justify-content:space-between;font-size:0.8em;color:#667788;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>创美水泵智能选型工具</h1>
+<p class="sub">输入工况参数，一键匹配最优泵型 | 含管损计算</p>
+<div class="brand-tag">浙江创美机电有限公司 · 官方产品数据库</div>
+</div>
+
+<div class="main-grid">
+<!-- 左栏：参数输入 -->
+<div>
+<div class="card">
+<h2>工况参数</h2>
+<div class="form-group"><label>需求流量 Q (m³/h)</label><input type="number" id="q" placeholder="例：500" step="0.1" min="1"></div>
+<div class="form-group"><label>几何高差 Z (m) — 泵出口到出水点垂直高度</label><input type="number" id="geoHeight" placeholder="例：28" step="0.1" min="0" value="28" onchange="updateTotalHead()"></div>
+<div class="form-row">
+<div class="form-group"><label>沿程损失 hf (m)</label><input type="number" id="hfInput" placeholder="管损计算后自动填入" step="0.01" readonly style="color:#ffb74d"></div>
+<div class="form-group"><label>局部损失 hl (m)</label><input type="number" id="hlInput" placeholder="管损计算后自动填入" step="0.01" readonly style="color:#ffb74d"></div>
+</div>
+<div class="form-group"><label>安全余量 (m) — 建议为总扬程的5%~10%</label><input type="number" id="safetyMargin" placeholder="例：3" step="0.1" min="0" value="3" onchange="updateTotalHead()"></div>
+<div class="form-group" style="background:rgba(0,230,118,0.08);border-radius:8px;padding:10px">
+<label style="color:#00e676;font-weight:bold">总需求扬程 H = Z + hf + hl + 安全余量 (m)</label>
+<input type="number" id="h" style="font-size:1.2em;font-weight:bold;color:#00e676;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3)" readonly>
+</div>
+<div class="form-group"><label>泵类型</label>
+<select id="pumpType">
+<option value="all">全部类型</option>
+<option value="szq_large">大流量防汛泵 (SZQ系列)</option>
+<option value="szq_high">高扬程防汛泵 (SZQ系列)</option>
+<option value="szq_dual">双用防汛泵</option>
+<option value="szq_relay">接力泵</option>
+<option value="szq_downsuction">下吸式防汛泵</option>
+<option value="yzq">液压轴流泵 (YZQ系列)</option>
+</select></div>
+<div class="form-group"><label>电压要求</label>
+<select id="voltage"><option value="all">不限制</option><option value="220">220V</option><option value="380">380V</option></select></div>
+<button class="btn" onclick="doSelect()">开始选型</button>
+</div>
+
+<div class="card" style="margin-top:16px">
+<h2>管损计算（可选）</h2>
+<div class="form-row">
+<div class="form-group"><label>管径 DN (mm)</label><input type="number" id="pipeDn" placeholder="例：200" min="25" value="200"></div>
+<div class="form-group"><label>管长 L (m)</label><input type="number" id="pipeLen" placeholder="例：500" min="1" value="500"></div>
+</div>
+<div class="form-group"><label>管材</label>
+<select id="pipeMaterial" onchange="calcPipeLoss()">
+<option value="0.015">新钢管 (ε=0.015mm)</option>
+<option value="0.3">旧钢管 (ε=0.3mm)</option>
+<option value="0.25">铸铁管 (ε=0.25mm)</option>
+<option value="0.0015">塑料管/PVC (ε=0.0015mm)</option>
+<option value="0.5">水泥管 (ε=0.5mm)</option>
+<option value="0.1" selected>涂塑水带/软管 (ε=0.1mm, 对照)</option>
+</select></div>
+<div class="form-group"><label>局部阻力系数</label>
+<select id="localK">
+<option value="0">无局部阻力</option>
+<option value="0.5">简单管路 (K=0.5)</option>
+<option value="1.5">含弯头阀门 (K=1.5)</option>
+<option value="3">复杂管路 (K=3.0)</option>
+<option value="5">多弯头多阀 (K=5.0)</option>
+</select></div>
+<button class="btn btn-secondary" onclick="calcPipeLoss()">计算管损</button>
+<div id="pipeLossResult" style="margin-top:12px;font-size:0.9em;color:#aabbcc"></div>
+</div>
+</div>
+
+<!-- 右栏：选型结果 -->
+<div>
+<div class="card">
+<h2>选型结果</h2>
+<div id="resultArea"><div class="empty-state"><div class="icon">🔍</div><p>输入需求流量和扬程<br>点击「开始选型」匹配创美水泵</p></div></div>
+</div>
+<div class="card" style="margin-top:16px">
+<h2>选型分析</h2>
+<div id="analysisArea"><div class="empty-state"><p>选型后自动生成分析建议</p></div></div>
+</div>
+</div>
+</div>
+
+<div class="footer">创美水泵智能选型工具 v1.0 | 数据来源：浙江创美机电有限公司产品手册 | 计算依据：达西-魏斯巴赫公式</div>
+</div>
+
+<script>
+// ====== 创美水泵产品数据库（真实产品数据） ======
+const pumps = [
+  {model:"100SZQ60-15-4", series:"SZQ", type:"szq_high", flow:60, head:15, power:4, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ80-15-5.5", series:"SZQ", type:"szq_high", flow:80, head:15, power:5.5, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ80-16-5.5", series:"SZQ", type:"szq_high", flow:80, head:16, power:5.5, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ80-20-7.5", series:"SZQ", type:"szq_high", flow:80, head:20, power:7.5, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ100-15-7.5", series:"SZQ", type:"szq_high", flow:100, head:15, power:7.5, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ100-20-9", series:"SZQ", type:"szq_high", flow:100, head:20, power:9, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ100-25-11", series:"SZQ", type:"szq_high", flow:100, head:25, power:11, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ100-50-22", series:"SZQ", type:"szq_high", flow:100, head:50, power:22, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(铝合金)"},
+  {model:"100SZQ100-100-45", series:"SZQ", type:"szq_high", flow:100, head:100, power:45, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ100-120-55", series:"SZQ", type:"szq_high", flow:100, head:120, power:55, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ100-160-75", series:"SZQ", type:"szq_high", flow:100, head:160, power:75, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"100SZQ120-50-30", series:"SZQ", type:"szq_high", flow:120, head:50, power:30, voltage:380, speed:null, dia:100, cat:"高扬程防汛泵(铝合金)"},
+  {model:"150SZQ100-6-3", series:"SZQ", type:"szq_large", flow:100, head:6, power:3, voltage:380, speed:null, dia:150, cat:"大流量防汛泵(不锈钢)"},
+  {model:"150SZQ100-30-15", series:"SZQ", type:"szq_high", flow:100, head:30, power:15, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(铝合金)"},
+  {model:"150SZQ100-40-18.5", series:"SZQ", type:"szq_high", flow:100, head:40, power:18.5, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(铝合金)"},
+  {model:"150SZQ100-50-22", series:"SZQ", type:"szq_high", flow:100, head:50, power:22, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(铝合金)"},
+  {model:"150SZQ100-100-50", series:"SZQ", type:"szq_high", flow:100, head:100, power:50, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(铝合金)"},
+  {model:"150SZQ150-6-4", series:"SZQ", type:"szq_large", flow:150, head:6, power:4, voltage:380, speed:null, dia:150, cat:"大流量防汛泵(不锈钢)"},
+  {model:"150SZQ150-20-15", series:"SZQ", type:"szq_high", flow:150, head:20, power:15, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ150-20-15", series:"SZQ", type:"szq_high", flow:150, head:20, power:15, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(铝合金)"},
+  {model:"150SZQ150-25-18.5", series:"SZQ", type:"szq_high", flow:150, head:25, power:18.5, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ150-32-22", series:"SZQ", type:"szq_high", flow:150, head:32, power:22, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ150-35-22", series:"SZQ", type:"szq_high", flow:150, head:35, power:22, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ150-35-22", series:"SZQ", type:"szq_high", flow:150, head:35, power:22, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(铝合金)"},
+  {model:"150SZQ150-35-22GL", series:"SZQ-GL", type:"szq_relay", flow:150, head:35, power:22, voltage:380, speed:null, dia:150, cat:"高扬程接力泵"},
+  {model:"150SZQ150-45-30", series:"SZQ", type:"szq_high", flow:150, head:45, power:30, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ150-80-55", series:"SZQ", type:"szq_high", flow:150, head:80, power:55, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ150-100-75", series:"SZQ", type:"szq_high", flow:150, head:100, power:75, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-6-5.5", series:"SZQ", type:"szq_large", flow:200, head:6, power:5.5, voltage:380, speed:null, dia:150, cat:"大流量防汛泵(不锈钢)"},
+  {model:"150SZQ200-9-7.5L", series:"SZQ-L", type:"szq_relay", flow:200, head:9, power:7.5, voltage:380, speed:null, dia:150, cat:"不锈钢接力泵"},
+  {model:"150SZQ200-16-15", series:"SZQ", type:"szq_high", flow:200, head:16, power:15, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-20-18.5", series:"SZQ", type:"szq_high", flow:200, head:20, power:18.5, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-25-22", series:"SZQ", type:"szq_high", flow:200, head:25, power:22, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-35-30", series:"SZQ", type:"szq_high", flow:200, head:35, power:30, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-45-37", series:"SZQ", type:"szq_high", flow:200, head:45, power:37, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-55-45", series:"SZQ", type:"szq_high", flow:200, head:55, power:45, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-90-75", series:"SZQ", type:"szq_high", flow:200, head:90, power:75, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-100-95", series:"SZQ", type:"szq_high", flow:200, head:100, power:95, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-150-135", series:"SZQ", type:"szq_high", flow:200, head:150, power:135, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-200-175", series:"SZQ", type:"szq_high", flow:200, head:200, power:175, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ200-250-220", series:"SZQ", type:"szq_high", flow:200, head:250, power:220, voltage:380, speed:null, dia:150, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"150SZQ220-7-7.5", series:"SZQ", type:"szq_large", flow:220, head:7, power:7.5, voltage:380, speed:null, dia:150, cat:"大流量防汛泵(不锈钢)"},
+  {model:"150SZQ250-8-11", series:"SZQ-X", type:"szq_downsuction", flow:250, head:8, power:11, voltage:380, speed:null, dia:150, cat:"下吸式防汛泵(铝合金)"},
+  {model:"150SZQ250-8-11", series:"SZQ-X", type:"szq_downsuction", flow:250, head:8, power:11, voltage:380, speed:null, dia:150, cat:"下吸式防汛泵(不锈钢)"},
+  {model:"150SZQ250-9-11", series:"SZQ", type:"szq_large", flow:250, head:9, power:11, voltage:380, speed:null, dia:150, cat:"大流量防汛泵(不锈钢)"},
+  {model:"200SZQ150-20-15", series:"SZQ", type:"szq_high", flow:150, head:20, power:15, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ150-35-22", series:"SZQ", type:"szq_high", flow:150, head:35, power:22, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ150-40-30", series:"SZQ", type:"szq_high", flow:150, head:40, power:30, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ150-45-30", series:"SZQ", type:"szq_high", flow:150, head:45, power:30, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ150-55-37", series:"SZQ", type:"szq_high", flow:150, head:55, power:37, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ200-16-15", series:"SZQ", type:"szq_high", flow:200, head:16, power:15, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ200-20-18.5", series:"SZQ", type:"szq_high", flow:200, head:20, power:18.5, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ200-25-22", series:"SZQ", type:"szq_high", flow:200, head:25, power:22, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ200-30-30", series:"SZQ", type:"szq_high", flow:200, head:30, power:30, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ200-30-30", series:"SZQ", type:"szq_high", flow:200, head:30, power:30, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ200-45-37", series:"SZQ", type:"szq_high", flow:200, head:45, power:37, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ200-45-37", series:"SZQ", type:"szq_high", flow:200, head:45, power:37, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ200-45-37", series:"SZQ", type:"szq_high", flow:200, head:45, power:37, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵"},
+  {model:"200SZQ200-50-45", series:"SZQ", type:"szq_high", flow:200, head:50, power:45, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ200-50-45", series:"SZQ", type:"szq_high", flow:200, head:50, power:45, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ200-65-55", series:"SZQ", type:"szq_high", flow:200, head:65, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ200-65-55", series:"SZQ", type:"szq_high", flow:200, head:65, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ200-85-75", series:"SZQ", type:"szq_high", flow:200, head:85, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ200-100-95", series:"SZQ", type:"szq_high", flow:200, head:100, power:95, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ200-120-110", series:"SZQ", type:"szq_high", flow:200, head:120, power:110, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ200-150-135", series:"SZQ", type:"szq_high", flow:200, head:150, power:135, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ250-15-18.5", series:"SZQ", type:"szq_large", flow:250, head:15, power:18.5, voltage:380, speed:null, dia:200, cat:"大流量防汛泵(铝合金)"},
+  {model:"200YZQ300-10-15", series:"YZQ", type:"yzq", flow:300, head:10, power:15, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200SZQ300-18-22", series:"SZQ", type:"szq_high", flow:300, head:18, power:22, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ300-18-22", series:"SZQ", type:"szq_high", flow:300, head:18, power:22, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-23-30", series:"SZQ", type:"szq_high", flow:300, head:23, power:30, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ300-23-30", series:"SZQ", type:"szq_high", flow:300, head:23, power:30, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-30-37", series:"SZQ", type:"szq_high", flow:300, head:30, power:37, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ300-30-37", series:"SZQ", type:"szq_high", flow:300, head:30, power:37, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-30-37GL", series:"SZQ-GL", type:"szq_relay", flow:300, head:30, power:37, voltage:380, speed:null, dia:200, cat:"高扬程接力泵"},
+  {model:"200SZQ300-40-55", series:"SZQ", type:"szq_high", flow:300, head:40, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ300-40-55", series:"SZQ", type:"szq_high", flow:300, head:40, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-40-55", series:"SZQ", type:"szq_high", flow:300, head:40, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵"},
+  {model:"200SZQ300-50-75", series:"SZQ", type:"szq_high", flow:300, head:50, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ300-50-75", series:"SZQ", type:"szq_high", flow:300, head:50, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-60-75", series:"SZQ", type:"szq_high", flow:300, head:60, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-80-95", series:"SZQ", type:"szq_high", flow:300, head:80, power:95, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ300-80-95", series:"SZQ", type:"szq_high", flow:300, head:80, power:95, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-100-135", series:"SZQ", type:"szq_high", flow:300, head:100, power:135, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-110-135", series:"SZQ", type:"szq_high", flow:300, head:110, power:135, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-150-200", series:"SZQ", type:"szq_high", flow:300, head:150, power:200, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-200-270", series:"SZQ", type:"szq_high", flow:300, head:200, power:270, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ300-250-330", series:"SZQ", type:"szq_high", flow:300, head:250, power:330, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-8-15", series:"SZQ", type:"szq_large", flow:400, head:8, power:15, voltage:380, speed:null, dia:200, cat:"大流量防汛泵(铝合金)"},
+  {model:"200YZQ400-8-22", series:"YZQ", type:"yzq", flow:400, head:8, power:22, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200SZQ400-10-18.5", series:"SZQ", type:"szq_large", flow:400, head:10, power:18.5, voltage:380, speed:null, dia:200, cat:"大流量防汛泵(铝合金)"},
+  {model:"200YZQ400-12-30", series:"YZQ", type:"yzq", flow:400, head:12, power:30, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200YZQ400-15-37", series:"YZQ", type:"yzq", flow:400, head:15, power:37, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200SZQ400-20-37", series:"SZQ", type:"szq_high", flow:400, head:20, power:37, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ400-20-37", series:"SZQ", type:"szq_high", flow:400, head:20, power:37, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-25-45", series:"SZQ", type:"szq_high", flow:400, head:25, power:45, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵"},
+  {model:"200SZQ400-30-55", series:"SZQ", type:"szq_high", flow:400, head:30, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ400-30-55", series:"SZQ", type:"szq_high", flow:400, head:30, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-30-55", series:"SZQ", type:"szq_high", flow:400, head:30, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵"},
+  {model:"200SZQ400-30-55GL", series:"SZQ-GL", type:"szq_relay", flow:400, head:30, power:55, voltage:380, speed:null, dia:200, cat:"高扬程接力泵"},
+  {model:"200SZQ400-40-75", series:"SZQ", type:"szq_high", flow:400, head:40, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ400-40-75", series:"SZQ", type:"szq_high", flow:400, head:40, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-40-75", series:"SZQ", type:"szq_high", flow:400, head:40, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵"},
+  {model:"200SZQ400-50-95", series:"SZQ", type:"szq_high", flow:400, head:50, power:95, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ400-50-95", series:"SZQ", type:"szq_high", flow:400, head:50, power:95, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-60-110", series:"SZQ", type:"szq_high", flow:400, head:60, power:110, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-80-135", series:"SZQ", type:"szq_high", flow:400, head:80, power:135, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-80-150", series:"SZQ", type:"szq_high", flow:400, head:80, power:150, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-80-150GL", series:"SZQ-GL", type:"szq_relay", flow:400, head:80, power:150, voltage:380, speed:null, dia:200, cat:"高扬程接力泵"},
+  {model:"200SZQ400-100-175", series:"SZQ", type:"szq_high", flow:400, head:100, power:175, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-130-220", series:"SZQ", type:"szq_high", flow:400, head:130, power:220, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ400-150-255", series:"SZQ", type:"szq_high", flow:400, head:150, power:255, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ450-8-15", series:"SZQ", type:"szq_large", flow:450, head:8, power:15, voltage:380, speed:null, dia:200, cat:"大流量防汛泵(铝合金)"},
+  {model:"200YZQ500-7-22", series:"YZQ", type:"yzq", flow:500, head:7, power:22, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200SZQ500-9-22L", series:"SZQ-L", type:"szq_relay", flow:500, head:9, power:22, voltage:380, speed:null, dia:200, cat:"不锈钢接力泵"},
+  {model:"200SZQ500-9-22L", series:"SZQ-X", type:"szq_downsuction", flow:500, head:9, power:22, voltage:380, speed:null, dia:200, cat:"下吸式防汛泵(铝合金)"},
+  {model:"200SZQ500-9-22L", series:"SZQ-X", type:"szq_downsuction", flow:500, head:9, power:22, voltage:380, speed:null, dia:200, cat:"下吸式防汛泵(不锈钢)"},
+  {model:"200SZQ500-10-22", series:"SZQ", type:"szq_large", flow:500, head:10, power:22, voltage:380, speed:null, dia:200, cat:"大流量防汛泵(铝合金)"},
+  {model:"200SZQ500/150-10/35-22", series:"SZQ-DUAL", type:"szq_dual", flow:500, head:10, power:22, voltage:380, speed:null, dia:200, cat:"双用防汛泵(铝合金)"},
+  {model:"200SZQ500/200-10/25-22", series:"SZQ-DUAL", type:"szq_dual", flow:500, head:10, power:22, voltage:380, speed:null, dia:200, cat:"双用防汛泵(铝合金)"},
+  {model:"200SZQ500/150-10/35-22", series:"SZQ-DUAL", type:"szq_dual", flow:500, head:10, power:22, voltage:380, speed:null, dia:200, cat:"双用防汛泵(不锈钢)"},
+  {model:"200SZQ500/200-10/25-22", series:"SZQ-DUAL", type:"szq_dual", flow:500, head:10, power:22, voltage:380, speed:null, dia:200, cat:"双用防汛泵(不锈钢)"},
+  {model:"200SZQ500-10-22GL", series:"SZQ-GL", type:"szq_relay", flow:500, head:10, power:22, voltage:380, speed:null, dia:200, cat:"大流量接力泵"},
+  {model:"200YZQ500-10-30", series:"YZQ", type:"yzq", flow:500, head:10, power:30, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200SZQ500-12-27", series:"SZQ", type:"szq_large", flow:500, head:12, power:27, voltage:380, speed:null, dia:200, cat:"大流量防汛泵(铝合金)"},
+  {model:"200YZQ500-13-37", series:"YZQ", type:"yzq", flow:500, head:13, power:37, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200YZQ500-15-45", series:"YZQ", type:"yzq", flow:500, head:15, power:45, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200SZQ500-20-45", series:"SZQ", type:"szq_high", flow:500, head:20, power:45, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ500-20-45", series:"SZQ", type:"szq_high", flow:500, head:20, power:45, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ500-20-45", series:"SZQ", type:"szq_high", flow:500, head:20, power:45, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵"},
+  {model:"200SZQ500-25-55", series:"SZQ", type:"szq_high", flow:500, head:25, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ500-25-55", series:"SZQ", type:"szq_high", flow:500, head:25, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ500-25-55", series:"SZQ", type:"szq_high", flow:500, head:25, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵"},
+  {model:"200SZQ500-30-65", series:"SZQ", type:"szq_high", flow:500, head:30, power:65, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ500-30-65", series:"SZQ", type:"szq_high", flow:500, head:30, power:65, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ500-30-75", series:"SZQ", type:"szq_high", flow:500, head:30, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵"},
+  {model:"200SZQ500-35-75", series:"SZQ", type:"szq_high", flow:500, head:35, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ500-35-75", series:"SZQ", type:"szq_high", flow:500, head:35, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ-HL-22", series:"SZQ-HL", type:"szq_dual", flow:500, head:35, power:22, voltage:380, speed:null, dia:200, cat:"双用防汛泵"},
+  {model:"200SZQ500-40-95", series:"SZQ", type:"szq_high", flow:500, head:40, power:95, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ500-40-95", series:"SZQ", type:"szq_high", flow:500, head:40, power:95, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵"},
+  {model:"200SZQ500-50-110", series:"SZQ", type:"szq_high", flow:500, head:50, power:110, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ500-60-130", series:"SZQ", type:"szq_high", flow:500, head:60, power:130, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ500-65-150", series:"SZQ", type:"szq_high", flow:500, head:65, power:150, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ500-80-175", series:"SZQ", type:"szq_high", flow:500, head:80, power:175, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ500-80-180", series:"SZQ", type:"szq_high", flow:500, head:80, power:180, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ500-100-200", series:"SZQ", type:"szq_high", flow:500, head:100, power:200, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ600-8-22", series:"SZQ", type:"szq_large", flow:600, head:8, power:22, voltage:380, speed:null, dia:200, cat:"大流量防汛泵(铝合金)"},
+  {model:"200SZQ600/150-8/35-22", series:"SZQ-DUAL", type:"szq_dual", flow:600, head:8, power:22, voltage:380, speed:null, dia:200, cat:"双用防汛泵(铝合金)"},
+  {model:"200SZQ600/150-8/35-22", series:"SZQ-DUAL", type:"szq_dual", flow:600, head:8, power:22, voltage:380, speed:null, dia:200, cat:"双用防汛泵(不锈钢)"},
+  {model:"200YZQ600-8-30", series:"YZQ", type:"yzq", flow:600, head:8, power:30, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200SZQ600-10-30", series:"SZQ", type:"szq_large", flow:600, head:10, power:30, voltage:380, speed:null, dia:200, cat:"大流量防汛泵(铝合金)"},
+  {model:"200SZQ600-10-30L", series:"SZQ-L", type:"szq_relay", flow:600, head:10, power:30, voltage:380, speed:null, dia:200, cat:"不锈钢接力泵"},
+  {model:"200SZQ600-10-30L", series:"SZQ-X", type:"szq_downsuction", flow:600, head:10, power:30, voltage:380, speed:null, dia:200, cat:"下吸式防汛泵(铝合金)"},
+  {model:"200SZQ600-10-30L", series:"SZQ-X", type:"szq_downsuction", flow:600, head:10, power:30, voltage:380, speed:null, dia:200, cat:"下吸式防汛泵(不锈钢)"},
+  {model:"200YZQ600-10-37", series:"YZQ", type:"yzq", flow:600, head:10, power:37, voltage:380, speed:null, dia:200, cat:"液压轴流泵"},
+  {model:"200SZQ600-20-55", series:"SZQ", type:"szq_high", flow:600, head:20, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ600-20-55", series:"SZQ", type:"szq_high", flow:600, head:20, power:55, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ600-30-75", series:"SZQ", type:"szq_high", flow:600, head:30, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"200SZQ600-30-75", series:"SZQ", type:"szq_high", flow:600, head:30, power:75, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"200SZQ600-40-100", series:"SZQ", type:"szq_high", flow:600, head:40, power:100, voltage:380, speed:null, dia:200, cat:"高扬程防汛泵(铝合金)"},
+  {model:"250SZQ400-10-18.5", series:"SZQ", type:"szq_large", flow:400, head:10, power:18.5, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(不锈钢)"},
+  {model:"250SZQ450-8-15", series:"SZQ", type:"szq_large", flow:450, head:8, power:15, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(不锈钢)"},
+  {model:"250SZQ500-10-22", series:"SZQ", type:"szq_large", flow:500, head:10, power:22, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(不锈钢)"},
+  {model:"250SZQ600-8-22", series:"SZQ", type:"szq_large", flow:600, head:8, power:22, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(不锈钢)"},
+  {model:"250SZQ600-10-25", series:"SZQ", type:"szq_large", flow:600, head:10, power:25, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(铝合金)"},
+  {model:"250SZQ600/150-10/45-30", series:"SZQ-DUAL", type:"szq_dual", flow:600, head:10, power:30, voltage:380, speed:null, dia:250, cat:"双用防汛泵(铝合金)"},
+  {model:"250SZQ600/150-10/45-30", series:"SZQ-DUAL", type:"szq_dual", flow:600, head:10, power:30, voltage:380, speed:null, dia:250, cat:"双用防汛泵(不锈钢)"},
+  {model:"250SZQ600-12-30", series:"SZQ", type:"szq_large", flow:600, head:12, power:30, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(不锈钢)"},
+  {model:"250SZQ600-12-30", series:"SZQ", type:"szq_large", flow:600, head:12, power:30, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(铝合金)"},
+  {model:"250SZQ600-20-55", series:"SZQ", type:"szq_high", flow:600, head:20, power:55, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ600-30-75", series:"SZQ", type:"szq_high", flow:600, head:30, power:75, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ600-40-110", series:"SZQ", type:"szq_high", flow:600, head:40, power:110, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ600-50-135", series:"SZQ", type:"szq_high", flow:600, head:50, power:135, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ600-50-130", series:"SZQ", type:"szq_high", flow:600, head:50, power:130, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ-HL-30", series:"SZQ-HL", type:"szq_dual", flow:600, head:50, power:30, voltage:380, speed:null, dia:250, cat:"双用防汛泵"},
+  {model:"250SZQ600-60-160", series:"SZQ", type:"szq_high", flow:600, head:60, power:160, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ600-70-175", series:"SZQ", type:"szq_high", flow:600, head:70, power:175, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ600-80-200", series:"SZQ", type:"szq_high", flow:600, head:80, power:200, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ600-100-255", series:"SZQ", type:"szq_high", flow:600, head:100, power:255, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ650-10-30", series:"SZQ", type:"szq_large", flow:650, head:10, power:30, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(铝合金)"},
+  {model:"250SZQ720-10-37", series:"SZQ", type:"szq_large", flow:720, head:10, power:37, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(铝合金)"},
+  {model:"250SZQ750-7-30", series:"SZQ", type:"szq_large", flow:750, head:7, power:30, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(铝合金)"},
+  {model:"250SZQ750/300-10/30-37", series:"SZQ-DUAL", type:"szq_dual", flow:750, head:10, power:37, voltage:380, speed:null, dia:250, cat:"双用防汛泵(铝合金)"},
+  {model:"250SZQ750/300-10/30-37", series:"SZQ-DUAL", type:"szq_dual", flow:750, head:10, power:37, voltage:380, speed:null, dia:250, cat:"双用防汛泵(不锈钢)"},
+  {model:"250YZQ800-6-37", series:"YZQ", type:"yzq", flow:800, head:6, power:37, voltage:380, speed:null, dia:250, cat:"液压轴流泵"},
+  {model:"250SZQ800-9-37L", series:"SZQ-L", type:"szq_relay", flow:800, head:9, power:37, voltage:380, speed:null, dia:250, cat:"不锈钢接力泵"},
+  {model:"250SZQ800-9-37L", series:"SZQ-X", type:"szq_downsuction", flow:800, head:9, power:37, voltage:380, speed:null, dia:250, cat:"下吸式防汛泵(铝合金)"},
+  {model:"250SZQ800-9-37L", series:"SZQ-X", type:"szq_downsuction", flow:800, head:9, power:37, voltage:380, speed:null, dia:250, cat:"下吸式防汛泵(不锈钢)"},
+  {model:"250SZQ800-10-37", series:"SZQ", type:"szq_large", flow:800, head:10, power:37, voltage:380, speed:null, dia:250, cat:"大流量防汛泵(不锈钢)"},
+  {model:"250SZQ800-10-37GL", series:"SZQ-GL", type:"szq_relay", flow:800, head:10, power:37, voltage:380, speed:null, dia:250, cat:"大流量接力泵"},
+  {model:"250YZQ800-10-50", series:"YZQ", type:"yzq", flow:800, head:10, power:50, voltage:380, speed:null, dia:250, cat:"液压轴流泵"},
+  {model:"250YZQ800-15-75", series:"YZQ", type:"yzq", flow:800, head:15, power:75, voltage:380, speed:null, dia:250, cat:"液压轴流泵"},
+  {model:"250SZQ800-20-75", series:"SZQ", type:"szq_high", flow:800, head:20, power:75, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ800-30-110", series:"SZQ", type:"szq_high", flow:800, head:30, power:110, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ800-40-135", series:"SZQ", type:"szq_high", flow:800, head:40, power:135, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ800-50-175", series:"SZQ", type:"szq_high", flow:800, head:50, power:175, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ800-60-200", series:"SZQ", type:"szq_high", flow:800, head:60, power:200, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ800-70-235", series:"SZQ", type:"szq_high", flow:800, head:70, power:235, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"250SZQ800-80-275", series:"SZQ", type:"szq_high", flow:800, head:80, power:275, voltage:380, speed:null, dia:250, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"300SZQ800-15-55", series:"SZQ", type:"szq_large", flow:800, head:15, power:55, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(不锈钢)"},
+  {model:"300YZQ800-15-75", series:"YZQ", type:"yzq", flow:800, head:15, power:75, voltage:380, speed:null, dia:300, cat:"液压轴流泵"},
+  {model:"300SZQ1000-8-37", series:"SZQ", type:"szq_large", flow:1000, head:8, power:37, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(铝合金)"},
+  {model:"300SZQ1000-8-37", series:"SZQ", type:"szq_large", flow:1000, head:8, power:37, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(不锈钢)"},
+  {model:"300YZQ1000-8-50", series:"YZQ", type:"yzq", flow:1000, head:8, power:50, voltage:380, speed:null, dia:300, cat:"液压轴流泵"},
+  {model:"300SZQ1000-10-45", series:"SZQ", type:"szq_large", flow:1000, head:10, power:45, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(铝合金)"},
+  {model:"300SZQ1000-10-45", series:"SZQ", type:"szq_large", flow:1000, head:10, power:45, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(不锈钢)"},
+  {model:"300SZQ1000/500-10/20-45", series:"SZQ-DUAL", type:"szq_dual", flow:1000, head:10, power:45, voltage:380, speed:null, dia:300, cat:"双用防汛泵(铝合金)"},
+  {model:"300SZQ1000/500-10/20-45", series:"SZQ-DUAL", type:"szq_dual", flow:1000, head:10, power:45, voltage:380, speed:null, dia:300, cat:"双用防汛泵(不锈钢)"},
+  {model:"300SZQ1000-10-45GL", series:"SZQ-GL", type:"szq_relay", flow:1000, head:10, power:45, voltage:380, speed:null, dia:300, cat:"大流量接力泵"},
+  {model:"300YZQ1000-10-60", series:"YZQ", type:"yzq", flow:1000, head:10, power:60, voltage:380, speed:null, dia:300, cat:"液压轴流泵"},
+  {model:"300SZQ1000-13-60", series:"SZQ", type:"szq_large", flow:1000, head:13, power:60, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(铝合金)"},
+  {model:"300SZQ1000-15-75", series:"SZQ", type:"szq_large", flow:1000, head:15, power:75, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(铝合金)"},
+  {model:"300SZQ1000-15-75", series:"SZQ", type:"szq_large", flow:1000, head:15, power:75, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(不锈钢)"},
+  {model:"300SZQ-HL-45", series:"SZQ-HL", type:"szq_dual", flow:1000, head:20, power:45, voltage:380, speed:null, dia:300, cat:"双用防汛泵"},
+  {model:"300SZQ1000-30-135", series:"SZQ", type:"szq_high", flow:1000, head:30, power:135, voltage:380, speed:null, dia:300, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"300SZQ1000-40-175", series:"SZQ", type:"szq_high", flow:1000, head:40, power:175, voltage:380, speed:null, dia:300, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"300SZQ1000-50-210", series:"SZQ", type:"szq_high", flow:1000, head:50, power:210, voltage:380, speed:null, dia:300, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"300SZQ1000-60-255", series:"SZQ", type:"szq_high", flow:1000, head:60, power:255, voltage:380, speed:null, dia:300, cat:"高扬程防汛泵(不锈钢)"},
+  {model:"300SZQ1200-10-55", series:"SZQ", type:"szq_large", flow:1200, head:10, power:55, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(铝合金)"},
+  {model:"300SZQ1200-10-55", series:"SZQ", type:"szq_large", flow:1200, head:10, power:55, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(不锈钢)"},
+  {model:"300SZQ1200/400-10/30-55", series:"SZQ-DUAL", type:"szq_dual", flow:1200, head:10, power:55, voltage:380, speed:null, dia:300, cat:"双用防汛泵(铝合金)"},
+  {model:"300SZQ1200/400-10/30-55", series:"SZQ-DUAL", type:"szq_dual", flow:1200, head:10, power:55, voltage:380, speed:null, dia:300, cat:"双用防汛泵(不锈钢)"},
+  {model:"300SZQ1300-10-60", series:"SZQ", type:"szq_large", flow:1300, head:10, power:60, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(铝合金)"},
+  {model:"300SZQ1500-10-75", series:"SZQ", type:"szq_large", flow:1500, head:10, power:75, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(铝合金)"},
+  {model:"300SZQ1500-10-75", series:"SZQ", type:"szq_large", flow:1500, head:10, power:75, voltage:380, speed:null, dia:300, cat:"大流量防汛泵(不锈钢)"},
+  {model:"300YZQ1500-10-90", series:"YZQ", type:"yzq", flow:1500, head:10, power:90, voltage:380, speed:null, dia:300, cat:"液压轴流泵"},
+  {model:"400SZQ2000-10-90", series:"SZQ", type:"szq_large", flow:2000, head:10, power:90, voltage:380, speed:null, dia:400, cat:"大流量防汛泵(不锈钢)"},
+  {model:"400SZQ2000-15-135", series:"SZQ", type:"szq_large", flow:2000, head:15, power:135, voltage:380, speed:null, dia:400, cat:"大流量防汛泵(不锈钢)"}
+];
+
+// ====== 达西-魏斯巴赫管损计算 ======
+function darcyWeisbach(Q, D, L, roughness, localK) {
+  // Q: m³/h, D: mm, L: m, roughness: mm, localK: 局部阻力系数
+  const A = Math.PI * Math.pow(D/1000, 2) / 4;  // 截面积 m²
+  const v = (Q/3600) / A;  // 流速 m/s
+  const g = 9.81;
+  const nu = 1.004e-6;  // 运动粘度 m²/s (20°C)
+  const Re = v * (D/1000) / nu;
+  if (Re < 2300 || Re <= 0) {
+    const f = Re > 0 ? 64/Re : 0.02;
+    const hf = f * L/(D/1000) * v*v/(2*g);
+    const hl = localK * v*v/(2*g);
+    return {v, Re, f, hf, hl, total: hf+hl, regime: '层流'};
+  }
+  // Colebrook 迭代
+  const eps = roughness/1000;  // 转换为 m
+  let f = 0.02;
+  for(let i=0; i<20; i++) {
+    const lhs = 1/Math.sqrt(f);
+    const rhs = -2*Math.log10(eps/(3.7*(D/1000)) + 2.51/(Re*Math.sqrt(f)));
+    const fNew = 1/(rhs*rhs);
+    if(Math.abs(fNew-f) < 1e-8) break;
+    f = fNew;
+  }
+  const hf = f * L/(D/1000) * v*v/(2*g);
+  const hl = localK * v*v/(2*g);
+  return {v, Re, f, hf, hl, total: hf+hl, regime: Re<4000 ? '过渡区' : '湍流'};
+}
+
+function calcPipeLoss() {
+  const Q = parseFloat(document.getElementById('q').value);
+  const D = parseFloat(document.getElementById('pipeDn').value);
+  const L = parseFloat(document.getElementById('pipeLen').value);
+  const roughness = parseFloat(document.getElementById('pipeMaterial').value);
+  const localK = parseFloat(document.getElementById('localK').value);
+  const el = document.getElementById('pipeLossResult');
+
+  if (!Q || !D || !L || Q<=0 || D<=0 || L<=0) {
+    el.innerHTML = '<span style="color:#ff5252">请先填写需求流量、管径和管长</span>';
+    return;
+  }
+
+  const r = darcyWeisbach(Q, D, L, roughness, localK);
+
+  // 自动填入沿程损失和局部损失
+  document.getElementById('hfInput').value = r.hf.toFixed(2);
+  document.getElementById('hlInput').value = r.hl.toFixed(2);
+
+  // 汇总总需求扬程
+  updateTotalHead();
+
+  el.innerHTML = `
+    <div style="background:rgba(79,172,254,0.08);border-radius:8px;padding:12px">
+      <div class="calc-row"><span>流速 v</span><span>${r.v.toFixed(2)} m/s</span></div>
+      <div class="calc-row"><span>雷诺数 Re</span><span>${r.Re.toFixed(0)} (${r.regime})</span></div>
+      <div class="calc-row"><span>沿程摩擦系数 λ</span><span>${r.f.toFixed(5)}</span></div>
+      <div class="calc-row"><span>沿程损失 hf</span><span style="color:#ffb74d">${r.hf.toFixed(2)} m</span></div>
+      <div class="calc-row"><span>局部损失 hl</span><span style="color:#ffb74d">${r.hl.toFixed(2)} m</span></div>
+      <div class="calc-row" style="font-size:1em;margin-top:4px"><span style="color:#4facfe">管损合计 hf+hl</span><span style="color:#ffb74d;font-size:1.1em">${r.total.toFixed(2)} m</span></div>
+      <div class="calc-row" style="font-size:1em;margin-top:4px;border-top:1px solid rgba(255,255,255,0.1);padding-top:6px"><span style="color:#00e676">总需求扬程</span><span style="color:#00e676;font-size:1.1em">${document.getElementById('h').value} m</span></div>
+    </div>
+  `;
+}
+
+// ====== 总需求扬程自动汇总 ======
+function updateTotalHead() {
+  const Z = parseFloat(document.getElementById('geoHeight').value) || 0;
+  const hf = parseFloat(document.getElementById('hfInput').value) || 0;
+  const hl = parseFloat(document.getElementById('hlInput').value) || 0;
+  const safety = parseFloat(document.getElementById('safetyMargin').value) || 0;
+  const total = Z + hf + hl + safety;
+  document.getElementById('h').value = total.toFixed(2);
+}
+
+// ====== 选型逻辑 ======
+function doSelect() {
+  const Q = parseFloat(document.getElementById('q').value);
+  const H = parseFloat(document.getElementById('h').value);
+  const pumpType = document.getElementById('pumpType').value;
+  const voltage = document.getElementById('voltage').value;
+  const resultEl = document.getElementById('resultArea');
+  const analysisEl = document.getElementById('analysisArea');
+
+  if (!Q || !H || Q<=0 || H<=0) {
+    resultEl.innerHTML = '<div class="empty-state"><p style="color:#ff5252">请输入有效的流量和扬程</p></div>';
+    return;
+  }
+
+  // 筛选
+  let candidates = pumps.filter(p => {
+    if(pumpType !== 'all' && p.type !== pumpType) return false;
+    if(voltage !== 'all' && p.voltage != voltage) return false;
+    // 流量和扬程都要满足（额定 ≥ 需求）
+    return p.flow >= Q * 0.7 && p.head >= H * 0.7;
+  });
+
+  // 按匹配度排序：流量偏差 + 扬程偏差，优先匹配度和余量均衡
+  candidates.sort((a,b) => {
+    const scoreA = Math.abs(a.flow - Q)/Math.max(Q,1) + Math.abs(a.head - H)/Math.max(H,1);
+    const scoreB = Math.abs(b.flow - Q)/Math.max(Q,1) + Math.abs(b.head - H)/Math.max(H,1);
+    return scoreA - scoreB;
+  });
+
+  if(candidates.length === 0) {
+    resultEl.innerHTML = `<div class="empty-state"><p style="color:#ffb74d">未找到完全匹配的泵型</p><p style="font-size:0.85em;color:#667788">尝试放宽条件或选择「全部类型」</p></div>`;
+    // 降级：显示最接近的
+    let fallback = pumps.filter(p => {
+      if(pumpType !== 'all' && p.type !== pumpType) return false;
+      if(voltage !== 'all' && p.voltage != voltage) return false;
+      return true;
+    });
+    fallback.sort((a,b) => {
+      const sA = Math.abs(a.flow-Q)/Math.max(Q,1) + Math.abs(a.head-H)/Math.max(H,1);
+      const sB = Math.abs(b.flow-Q)/Math.max(Q,1) + Math.abs(b.head-H)/Math.max(H,1);
+      return sA - sB;
+    });
+    if(fallback.length>0) {
+      const fb = fallback.slice(0,3);
+      analysisEl.innerHTML = `<div class="warning-box"><strong>最接近的型号（仅供参考）</strong><br>`+
+        fb.map(p=>`${p.model}：额定Q=${p.flow}m³/h H=${p.head}m（${p.flow<Q?'流量不足':'扬程不足'}）`).join('<br>')+
+        `</div>`;
+    }
+    return;
+  }
+
+  // 展示前5个
+  const top = candidates.slice(0, 6);
+  const best = top[0];
+  const exact = top.filter(p => p.flow >= Q && p.head >= H);
+  const close = top.filter(p => (p.flow >= Q*0.9 && p.head >= H*0.9) && !exact.includes(p));
+
+  let html = '';
+  top.forEach((p, i) => {
+    const flowOk = p.flow >= Q;
+    const headOk = p.head >= H;
+    let badge = '', badgeCls = '';
+    if(flowOk && headOk) { badge = '完全满足'; badgeCls = 'match-exact'; }
+    else if(flowOk || headOk) { badge = '基本满足'; badgeCls = 'match-close'; }
+    else { badge = '余量不足'; badgeCls = 'match-fallback'; }
+
+    html += `<div class="result-card${i===0 && flowOk && headOk ? ' best' : ''}">
+      <h3>${i===0 ? '★ ' : ''}${p.model} <span class="match-badge ${badgeCls}">${badge}</span></h3>
+      <div class="params">
+        <div class="param"><div class="val">${p.flow}</div><div class="lbl">流量 m³/h</div></div>
+        <div class="param"><div class="val">${p.head}</div><div class="lbl">扬程 m</div></div>
+        <div class="param"><div class="val">${p.power}</div><div class="lbl">功率 kW</div></div>
+        <div class="param"><div class="val">${p.voltage}V</div><div class="lbl">电压</div></div>
+        <div class="param"><div class="val">DN${p.dia}</div><div class="lbl">口径</div></div>
+        <div class="param"><div class="val">${p.speed != null ? p.speed : '-'}</div><div class="lbl">转速 rpm</div></div>
+      </div>
+      <div class="info-row">
+        <span>系列：${p.series}</span><span>类型：${p.cat}</span>
+      </div>
+    </div>`;
+  });
+
+  if(candidates.length > 6) {
+    html += `<div style="text-align:center;color:#667788;font-size:0.85em;margin-top:8px">共 ${candidates.length} 个匹配型号，显示前 6 个</div>`;
+  }
+
+  resultEl.innerHTML = html;
+
+  // 选型分析
+  let analysis = '';
+  if(best.flow >= Q && best.head >= H) {
+    const marginQ = ((best.flow - Q)/Q*100).toFixed(0);
+    const marginH = ((best.head - H)/H*100).toFixed(0);
+    analysis += `<div style="color:#00e676;font-weight:bold;margin-bottom:8px">★ 推荐型号：${best.model}</div>`;
+    analysis += `<div style="color:#aabbcc;font-size:0.9em">流量余量 ${marginQ}%，扬程余量 ${marginH}%。`;
+    if(parseInt(marginQ)>50) analysis += ` 流量余量偏大，可考虑降档选型。`;
+    if(parseInt(marginH)>50) analysis += ` 扬程余量偏大，可选用更低扬程泵型节省能耗。`;
+    analysis += `</div>`;
+  } else {
+    analysis += `<div style="color:#ffb74d;font-weight:bold;margin-bottom:8px">最接近型号：${best.model}</div>`;
+    analysis += `<div style="color:#ffb74d;font-size:0.9em">该型号不能完全满足需求。`;
+    if(best.flow < Q) analysis += ` 流量差 ${(Q-best.flow).toFixed(1)} m³/h，请考虑多台并联或选更大口径。`;
+    if(best.head < H) analysis += ` 扬程差 ${(H-best.head).toFixed(1)} m，请考虑更高扬程泵型。`;
+    analysis += `</div>`;
+  }
+
+  // 台数建议
+  if(Q > 200) {
+    const n2 = Math.ceil(Q / 2 / 100) * 2;
+    analysis += `<div style="margin-top:8px;font-size:0.85em;color:#4facfe">大流量建议：可考虑 ${n2} 台泵并联运行，单台流量约 ${(Q/n2).toFixed(0)} m³/h</div>`;
+  }
+
+  analysisEl.innerHTML = analysis;
+}
+
+// 回车快捷选型
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
+    e.preventDefault();
+    doSelect();
+  }
+});
+
+// 预填示例数据
+document.getElementById('q').value = 500;
+updateTotalHead();
+</script>
+</body>
+</html>
