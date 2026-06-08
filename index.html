@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="description" content="创美水泵智能选型工具 - 输入流量、扬程等工况参数，一键匹配最优防汛泵型号。内置229款产品数据库，支持达西-魏斯巴赫管损计算。浙江创美机电有限公司官方选型平台。">
+<meta name="keywords" content="防汛泵,水泵选型,排水泵,防汛泵车,轴流泵,接力泵,管损计算,创美机电">
+<meta property="og:title" content="创美水泵智能选型工具">
+<meta property="og:description" content="输入工况参数，一键匹配最优泵型 | 内置229款真实产品数据 + 管损计算">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://chuangmei-cn.github.io/pump-selector/">
+<meta property="og:site_name" content="浙江创美机电有限公司">
 <title>创美水泵选型工具</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -80,6 +87,10 @@ body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:linear-gr
 .export-bar .btn{flex:1;min-width:120px;font-size:0.85em;padding:8px}
 
 .info-row{display:flex;justify-content:space-between;font-size:0.8em;color:#667788;margin-top:4px}
+.footer{text-align:center;padding:30px 20px;margin-top:30px;border-top:1px solid rgba(255,255,255,0.08);color:#556677;font-size:0.85em;line-height:2}
+.footer .company{color:#8899bb;font-weight:bold;font-size:1em}
+.footer .contact{color:#4facfe}
+@media print{.main-grid{display:block}.card{break-inside:avoid;page-break-inside:avoid}.footer{border-top:1px solid #ccc;color:#333}}
 </style>
 <script>
 var _hmt = _hmt || [];
@@ -376,5 +387,25 @@ document.addEventListener('keydown', e => {
 document.getElementById('q').value = 500;
 updateTotalHead();
 </script>
+
+<div class="footer">
+<div class="company">浙江创美机电有限公司</div>
+<div>地址：浙江省温岭市大溪镇泵业园区 &nbsp;|&nbsp; 主营：防汛泵、轴流泵、接力泵、液压泵</div>
+<div class="contact">咨询热线：请致电创美机电销售部获取最新报价</div>
+<div style="margin-top:8px;font-size:0.75em;color:#445566">本工具数据基于创美机电官方产品手册，选型结果仅供参考，实际工况请以技术协议为准。</div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "浙江创美机电有限公司",
+  "description": "专业防汛泵、轴流泵、接力泵制造商，提供水泵智能选型工具",
+  "url": "https://chuangmei-cn.github.io/pump-selector/",
+  "areaServed": "CN",
+  "knowsAbout": ["防汛泵","轴流泵","接力泵","液压泵","排水泵"]
+}
+</script>
+
 </body>
 </html>
