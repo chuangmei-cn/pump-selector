@@ -115,6 +115,16 @@ var _hmt = _hmt || [];
 <div>
 <div class="card">
 <h2>工况参数</h2>
+<div class="form-row">
+<div class="form-group" style="border:2px solid #ff4757;border-radius:8px;padding:8px;flex:1">
+<label style="color:#ff4757;font-weight:bold">企业名称</label>
+<input type="text" id="companyName" placeholder="请输入公司全称" style="border-color:#ff4757;color:#fff">
+</div>
+<div class="form-group" style="border:2px solid #ff4757;border-radius:8px;padding:8px;flex:1">
+<label style="color:#ff4757;font-weight:bold">联系方式</label>
+<input type="tel" id="contactPhone" placeholder="手机号/微信号" style="border-color:#ff4757;color:#fff">
+</div>
+</div>
 <div class="form-group"><label>需求流量 Q (m³/h)</label><input type="number" id="q" placeholder="例：500" step="0.1" min="1"></div>
 <div class="form-group"><label>几何高差 Z (m) — 泵出口到出水点垂直高度</label><input type="number" id="geoHeight" placeholder="例：28" step="0.1" min="0" value="28" onchange="updateTotalHead()"></div>
 <div class="form-row">
@@ -270,8 +280,41 @@ function doSelect() {
   const H = parseFloat(document.getElementById('h').value);
   const pumpType = document.getElementById('pumpType').value;
   const voltage = document.getElementById('voltage').value;
+  const company = document.getElementById('companyName').value.trim();
+  const phone = document.getElementById('contactPhone').value.trim();
   const resultEl = document.getElementById('resultArea');
   const analysisEl = document.getElementById('analysisArea');
+
+  // PushPlus 线索推送
+  if (company || phone) {
+    const PUSHPLUS_TOKEN = 'YOUR_PUSHPLUS_TOKEN';
+    if (PUSHPLUS_TOKEN !== 'YOUR_PUSHPLUS_TOKEN') {
+      const pushData = {
+        title: '创美水泵选型 - 新线索(' + (company || '未填') + ')',
+        content: [
+          '## 创美水泵选型工具 · 新客户线索',
+          '',
+          '| 字段 | 内容 |',
+          '|------|------|',
+          '| 企业名称 | ' + (company || '未填写') + ' |',
+          '| 联系方式 | ' + (phone || '未填写') + ' |',
+          '| 需求流量 | ' + Q + ' m³/h |',
+          '| 需求扬程 | ' + H + ' m |',
+          '| 泵型偏好 | ' + (pumpType==='all'?'全部':pumpType) + ' |',
+          '| 电压偏好 | ' + (voltage==='all'?'全部':voltage) + ' |',
+          '| 提交时间 | ' + new Date().toLocaleString('zh-CN') + ' |'
+        ].join('\n'),
+        template: 'html'
+      };
+      fetch('https://www.pushplus.plus/send', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({token: PUSHPLUS_TOKEN, ...pushData})
+      }).catch(e => console.log('PushPlus发送失败:', e));
+    } else {
+      console.log('PushPlus未配置token，跳过推送');
+    }
+  }
 
   if (!Q || !H || Q<=0 || H<=0) {
     resultEl.innerHTML = '<div class="empty-state"><p style="color:#ff5252">请输入有效的流量和扬程</p></div>';
