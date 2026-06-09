@@ -452,12 +452,12 @@ updateTotalHead();
 
 // ====== 常见工况快捷填充 ======
 const PRESETS = {
-  basement: {q:200, geoHeight:6, safetyMargin:2, label:'地下室排水', tubeLen:50, tubeDia:100, roughness:0.1, localK:1.5, pumpType:'all'},
-  city:     {q:500, geoHeight:6, safetyMargin:1, label:'城市排水', tubeLen:100, tubeDia:250, roughness:0.1, localK:1.5, pumpType:'all'},
-  tunnel:   {q:500, geoHeight:5, safetyMargin:1, label:'隧道排水', tubeLen:100, tubeDia:250, roughness:0.1, localK:1.5, pumpType:'all'},
-  river:    {q:500, geoHeight:8, safetyMargin:3, label:'河道抽排', tubeLen:100, tubeDia:150, roughness:0.1, localK:1.5, pumpType:'all'},
-  mine:     {q:300, geoHeight:25, safetyMargin:4, label:'矿井排水', tubeLen:80, tubeDia:150, roughness:0.1, localK:3.0, pumpType:'szq_high'},
-  fire:     {q:100, geoHeight:50, safetyMargin:5, label:'消防供水', tubeLen:200, tubeDia:100, roughness:0.1, localK:3.0, pumpType:'szq_high'}
+  basement: {q:200, geoHeight:6, safetyMargin:2, label:'地下室排水', tubeLen:50, tubeDia:250, roughness:0.1, localK:0, pumpType:'all'},
+  city:     {q:500, geoHeight:6, safetyMargin:1, label:'城市排水', tubeLen:100, tubeDia:250, roughness:0.1, localK:0, pumpType:'all'},
+  tunnel:   {q:500, geoHeight:5, safetyMargin:1, label:'隧道排水', tubeLen:100, tubeDia:250, roughness:0.1, localK:0, pumpType:'all'},
+  river:    {q:500, geoHeight:8, safetyMargin:3, label:'河道抽排', tubeLen:100, tubeDia:250, roughness:0.1, localK:0, pumpType:'all'},
+  mine:     {q:300, geoHeight:25, safetyMargin:4, label:'矿井排水', tubeLen:80, tubeDia:150, roughness:0.1, localK:0, pumpType:'szq_high'},
+  fire:     {q:100, geoHeight:50, safetyMargin:5, label:'消防供水', tubeLen:200, tubeDia:100, roughness:0.1, localK:0, pumpType:'szq_high'}
 };
 
 function fillPreset(key) {
