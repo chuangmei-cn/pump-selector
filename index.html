@@ -2,14 +2,14 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, , viewport-fit=cover">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <meta name="description" content="创美水泵智能选型工具 - 输入流量、扬程等工况参数，一键匹配最优防汛泵型号。内置229款产品数据库，支持达西-魏斯巴赫管损计算。浙江创美机电有限公司官方选型平台。">
 <meta name="keywords" content="防汛泵,水泵选型,排水泵,防汛泵车,轴流泵,接力泵,管损计算,创美机电">
 <meta property="og:title" content="创美水泵智能选型工具">
 <meta property="og:description" content="输入工况参数，一键匹配最优泵型 | 内置229款真实产品数据 + 管损计算">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://chuangmei-cn.github.io/pump-selector/">
+<meta property="og:url" content="https://chuangmei-cn.github.io/pump-selector/"><!-- 部署后请确认URL正确 -->
 <meta property="og:image" content="https://chuangmei-cn.github.io/pump-selector/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -18,6 +18,7 @@
 <meta itemprop="description" content="输入工况参数，一键匹配最优泵型 | 内置229款真实产品数据 + 管损计算">
 <meta itemprop="image" content="https://chuangmei-cn.github.io/pump-selector/og-image.png">
 <title>创美水泵选型工具</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTQiIGZpbGw9IiM0ZmFjZmUiLz48dGV4dCB4PSIxNiIgeT0iMjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCI+Q088L3RleHQ+PC9zdmc+">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:linear-gradient(135deg,#0a1628 0%,#1a2a4a 100%);min-height:100vh;color:#e0e6f0}
@@ -55,7 +56,8 @@ body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:linear-gr
 .radio-group label{display:flex;align-items:center;gap:6px;color:#aabbcc;cursor:pointer;font-size:0.9em}
 .radio-group input[type="radio"]{accent-color:#4facfe}
 
-.btn{width:100%;padding:12px;background:linear-gradient(135deg,#4facfe,#00c6ff);border:none;border-radius:10px;color:#fff;font-size:1em;font-weight:bold;cursor:pointer;transition:transform .15s,box-shadow .15s;letter-spacing:1px}
+.btn{width:100%;padding:12px;background:linear-gradient(135deg,#4facfe,#00c6ff);border:none;border-radius:10px;color:#fff;font-size:1em;font-weight:bold;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .2s;letter-spacing:1px}
+.btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
 .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,172,254,0.3)}
 .btn:active{transform:translateY(0)}
 .btn-secondary{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);margin-top:8px}
@@ -88,7 +90,6 @@ body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:linear-gr
 .warning-box{margin-top:12px;padding:12px;background:rgba(255,152,0,0.08);border:1px solid rgba(255,152,0,0.2);border-radius:8px;color:#ffb74d;font-size:0.85em}
 .warning-box strong{color:#ff9800}
 
-.footer{text-align:center;padding:20px;color:#445566;font-size:0.8em}
 
 .preset-bar{margin:0 0 16px 0;display:flex;flex-wrap:wrap;gap:6px}
 .preset-btn{flex:1;min-width:calc(50% - 3px);padding:8px 10px;background:rgba(79,172,254,0.1);border:1px solid rgba(79,172,254,0.25);border-radius:8px;color:#4facfe;font-size:0.78em;cursor:pointer;transition:all .15s;text-align:center}
@@ -99,6 +100,8 @@ body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:linear-gr
 .action-bar .btn{flex:1;min-width:120px;font-size:0.9em;padding:12px}
 .btn-quote{background:linear-gradient(135deg,#00e676,#00c853);color:#000}
 .btn-save{background:rgba(255,255,255,0.08);border:1px solid rgba(79,172,254,0.3);color:#4facfe}
+.btn-copy{background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);color:#ffc107}
+.btn-copy:hover{box-shadow:0 4px 12px rgba(255,193,7,0.2)}
 .btn-quote:hover{box-shadow:0 6px 20px rgba(0,230,118,0.4)}
 
 .export-bar{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
@@ -172,7 +175,7 @@ var _hmt = _hmt || [];
 <button class="preset-btn" onclick="fillPreset('mine')" title="矿井/基坑排水">矿井排水</button>
 <button class="preset-btn" onclick="fillPreset('fire')" title="消防/应急供水">消防供水</button>
 </div>
-<button class="btn" onclick="doSelect()">开始选型</button>
+<button class="btn btn-primary" onclick="doSelect()">开始选型</button>
 </div>
 
 <div class="card" style="margin-top:16px">
@@ -216,7 +219,6 @@ var _hmt = _hmt || [];
 </div>
 </div>
 
-<div class="footer">创美水泵智能选型工具 v1.0 | 数据来源：浙江创美机电有限公司产品手册 | 计算依据：达西-魏斯巴赫公式</div>
 </div>
 
 <script>
@@ -300,41 +302,33 @@ function updateTotalHead() {
 
 // ====== 选型逻辑 ======
 function doSelect() {
-  const PUSHPLUS_TOKEN = 'a82688a8ae80402386f38e87c6c1182b';
   const Q = parseFloat(document.getElementById('q').value);
-  const H = parseFloat(document.getElementById('h').value);
+  let H = parseFloat(document.getElementById('h').value);
   const pumpType = document.getElementById('pumpType').value;
   const voltage = document.getElementById('voltage').value;
   const company = document.getElementById('companyName').value.trim();
   const phone = document.getElementById('contactPhone').value.trim();
   const resultEl = document.getElementById('resultArea');
   const analysisEl = document.getElementById('analysisArea');
+  const selectBtn = document.querySelector('.btn-primary');
 
-  // PushPlus 线索推送
-  if (company || phone) {
-    const pushData = {
-      title: '创美水泵选型 - 新线索(' + (company || '未填') + ')',
-        content: [
-          '## 创美水泵选型工具 · 新客户线索',
-          '',
-          '| 字段 | 内容 |',
-          '|------|------|',
-          '| 企业名称 | ' + (company || '未填写') + ' |',
-          '| 联系方式 | ' + (phone || '未填写') + ' |',
-          '| 需求流量 | ' + Q + ' m³/h |',
-          '| 需求扬程 | ' + H + ' m |',
-          '| 泵型偏好 | ' + (pumpType==='all'?'全部':pumpType) + ' |',
-          '| 电压偏好 | ' + (voltage==='all'?'全部':voltage) + ' |',
-          '| 提交时间 | ' + new Date().toLocaleString('zh-CN') + ' |'
-        ].join('\n'),
-        template: 'html'
-      };
-      fetch('https://www.pushplus.plus/send', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({token: PUSHPLUS_TOKEN, ...pushData})
-      }).catch(e => console.log('PushPlus发送失败:', e));
+  // 按钮loading状态
+  if (selectBtn) {
+    selectBtn.textContent = '匹配中...';
+    selectBtn.disabled = true;
+    setTimeout(() => {
+      if (selectBtn) { selectBtn.textContent = '开始选型'; selectBtn.disabled = false; }
+    }, 3000);
   }
+
+  // 自动计算管损（如果管径管长已填写且管损为空）
+  const pipeDn = parseFloat(document.getElementById('pipeDn').value);
+  const pipeLen = parseFloat(document.getElementById('pipeLen').value);
+  if (Q > 0 && pipeDn > 0 && pipeLen > 0 && !document.getElementById('hfInput').value) {
+    calcPipeLoss();
+  }
+  // 重新读取更新后的H
+  H = parseFloat(document.getElementById('h').value);
 
   if (!Q || !H || Q<=0 || H<=0) {
     resultEl.innerHTML = '<div class="empty-state"><p style="color:#ff5252">请输入有效的流量和扬程</p></div>';
@@ -346,13 +340,14 @@ function doSelect() {
     if(pumpType !== 'all' && p.type !== pumpType) return false;
     if(voltage !== 'all' && p.voltage != voltage) return false;
     // 流量和扬程都要满足（额定 ≥ 需求）
-    return p.flow >= Q * 0.7 && p.head >= H * 0.7;
+    return p.flow >= Q * 0.85 && p.head >= H * 0.85;
   });
 
   // 按匹配度排序：流量偏差 + 扬程偏差，优先匹配度和余量均衡
   candidates.sort((a,b) => {
-    const scoreA = Math.abs(a.flow - Q)/Math.max(Q,1) + Math.abs(a.head - H)/Math.max(H,1);
-    const scoreB = Math.abs(b.flow - Q)/Math.max(Q,1) + Math.abs(b.head - H)/Math.max(H,1);
+    // 扬程不足比流量不足更致命，扬程偏差权重1.5
+    const scoreA = Math.abs(a.flow - Q)/Math.max(Q,1) + 1.5*Math.abs(a.head - H)/Math.max(H,1);
+    const scoreB = Math.abs(b.flow - Q)/Math.max(Q,1) + 1.5*Math.abs(b.head - H)/Math.max(H,1);
     return scoreA - scoreB;
   });
 
@@ -362,7 +357,8 @@ function doSelect() {
     let fallback = pumps.filter(p => {
       if(pumpType !== 'all' && p.type !== pumpType) return false;
       if(voltage !== 'all' && p.voltage != voltage) return false;
-      return true;
+      // 降级推荐也要有合理性：流量不超过2倍，扬程不低于50%
+      return p.flow <= Q * 2 && p.head >= H * 0.5;
     });
     fallback.sort((a,b) => {
       const sA = Math.abs(a.flow-Q)/Math.max(Q,1) + Math.abs(a.head-H)/Math.max(H,1);
@@ -413,7 +409,7 @@ function doSelect() {
     html += `<div style="text-align:center;color:#667788;font-size:0.85em;margin-top:8px">共 ${candidates.length} 个匹配型号，显示前 6 个</div>`;
   }
 
-  resultEl.innerHTML = html + '<div class="action-bar"><button class="btn btn-quote" onclick="getQuote()">获取详细报价与方案</button><button class="btn btn-save" onclick="saveResult()">保存选型结果</button></div>';
+  resultEl.innerHTML = html + '<div class="action-bar"><button class="btn btn-quote" onclick="getQuote()">获取详细报价与方案</button><button class="btn btn-save" onclick="saveResult()">保存选型结果</button><button class="btn btn-copy" onclick="copyWechatText()">复制微信文案</button></div>';
 
   // 选型分析
   let analysis = '';
@@ -438,9 +434,11 @@ function doSelect() {
   analysisEl.innerHTML = analysis;
 }
 
-// 回车快捷选型
+// 回车快捷选型（排除企业和联系方式输入框）
 document.addEventListener('keydown', e => {
-  if(e.key === 'Enter' && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
+  const skipIds = ['companyName', 'contactPhone'];
+  if(e.key === 'Enter' && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')
+    && !skipIds.includes(e.target.id)) {
     e.preventDefault();
     doSelect();
   }
@@ -465,21 +463,55 @@ function fillPreset(key) {
   document.getElementById('geoHeight').value = p.geoHeight;
   document.getElementById('safetyMargin').value = p.safetyMargin;
   document.getElementById('pumpType').value = p.pumpType;
-  if (p.tubeLen) document.getElementById('pipeLength').value = p.tubeLen;
-  if (p.tubeDia) document.getElementById('pipeDia').value = p.tubeDia;
-  if (p.roughness != null) document.getElementById('roughness').value = p.roughness;
-  if (p.localK != null) document.getElementById('localK').value = p.localK;
-  updateTotalHead();
+  if (p.tubeLen) document.getElementById('pipeLen').value = p.tubeLen;
+  if (p.tubeDia) document.getElementById('pipeDn').value = p.tubeDia;
+  if (p.roughness != null) document.getElementById('pipeMaterial').value = String(p.roughness);
+  if (p.localK != null) document.getElementById('localK').value = String(p.localK);
+  // 自动触发管损计算并更新总扬程
+  calcPipeLoss();
 }
 
 // ====== 获取报价 ======
 function getQuote() {
   const best = document.querySelector('.result-card');
-  const model = best ? best.querySelector('h3').textContent.replace('★ ','').trim() : '';
-  const msg = '您好，我对创美水泵型号 ' + model + ' 感兴趣，请提供详细报价与方案。';
-  window.open('https://work.weixin.qq.com/kfid/kfc6b8cd576f2e9f9b7', '_blank');
-  // 同时尝试拨号
-  setTimeout(() => { window.location.href = 'tel:15968662709'; }, 500);
+  const modelEl = best ? best.querySelector('h3') : null;
+  // 提取型号文本，去掉标记
+  const model = modelEl ? modelEl.childNodes[0].textContent.trim() : '';
+  // 打开企业微信客服，附带型号参数
+  const params = model ? '?model=' + encodeURIComponent(model) : '';
+  window.open('https://work.weixin.qq.com/kfid/kfc6b8cd576f2e9f9b7' + params, '_blank');
+}
+
+// ====== 复制微信文案 ======
+function copyWechatText() {
+  const bestCard = document.querySelector('.result-card.best') || document.querySelector('.result-card');
+  if (!bestCard) return;
+  const h3 = bestCard.querySelector('h3');
+  const model = h3 ? h3.childNodes[0].textContent.trim() : '';
+  const params = bestCard.querySelectorAll('.param');
+  let flow = '', head = '', power = '', dia = '';
+  if (params.length >= 5) {
+    flow = params[0].querySelector('.val').textContent;
+    head = params[1].querySelector('.val').textContent;
+    power = params[2].querySelector('.val').textContent;
+    dia = params[4].querySelector('.val').textContent;
+  }
+  const text = '【创美水泵选型】' + model
+    + ' | 流量' + flow + 'm³/h | 扬程' + head + 'm'
+    + ' | 功率' + power + 'kW | 口径' + dia
+    + ' | 咨询热线 15968662709';
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    if (btn) { btn.textContent = '已复制'; setTimeout(() => { btn.textContent = '复制微信文案'; }, 2000); }
+  }).catch(() => {
+    // fallback for non-HTTPS
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn = document.querySelector('.btn-copy');
+    if (btn) { btn.textContent = '已复制'; setTimeout(() => { btn.textContent = '复制微信文案'; }, 2000); }
+  });
 }
 
 // ====== 保存选型结果 ======
@@ -494,10 +526,10 @@ async function saveResult() {
   // 创建一个用于截图的容器
   const wrapper = document.createElement('div');
   wrapper.style.cssText = 'background:#1a1e2a;padding:16px;border-radius:12px;color:#e0e0e0;font-family:sans-serif;width:400px';
+  const bestCard = resultEl.querySelector('.result-card.best') || resultEl.querySelector('.result-card');
   wrapper.innerHTML = '<h2 style="color:#00d4ff;margin:0 0 4px;font-size:16px">创美水泵智能选型报告</h2>' +
     '<p style="color:#667788;font-size:11px;margin:0 0 12px">' + new Date().toLocaleString('zh-CN') + ' | 浙江创美机电有限公司</p>' +
-    resultEl.querySelector('.result-card').outerHTML +
-    (resultEl.querySelector('.result-card.best') ? '' : resultEl.querySelector('.result-card').outerHTML);
+    bestCard.outerHTML;
   document.body.appendChild(wrapper);
   wrapper.style.position = 'fixed';
   wrapper.style.left = '-9999px';
