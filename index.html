@@ -98,8 +98,15 @@ body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:linear-gr
 .action-bar{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
 .action-bar .btn{flex:1;min-width:120px;font-size:0.9em;padding:12px}
 .btn-quote{background:linear-gradient(135deg,#00e676,#00c853);color:#000}
+.btn-booth{background:linear-gradient(135deg,#ff6b35,#ff4500);color:#fff}
+.btn-booth:hover{box-shadow:0 6px 20px rgba(255,107,53,0.5)}
 .btn-save{background:rgba(255,255,255,0.08);border:1px solid rgba(79,172,254,0.3);color:#4facfe}
 .btn-quote:hover{box-shadow:0 6px 20px rgba(0,230,118,0.4)}
+
+.exhibition-bar{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:10px;flex-wrap:wrap}
+.exh-badge{background:linear-gradient(135deg,#ff6b35,#ff4500);color:#fff;padding:4px 14px;border-radius:20px;font-size:0.8em;font-weight:bold;animation:pulse 2s infinite}
+.exh-loc{color:#ffb74d;font-size:0.8em;font-weight:bold}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
 
 .export-bar{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .export-bar .btn{flex:1;min-width:120px;font-size:0.85em;padding:8px}
@@ -126,6 +133,10 @@ var _hmt = _hmt || [];
 <h1>创美水泵智能选型工具</h1>
 <p class="sub">输入工况参数，一键匹配最优泵型 | 含管损计算</p>
 <div class="brand-tag">浙江创美机电有限公司 · 官方产品数据库</div>
+<div class="exhibition-bar">
+<span class="exh-badge">广州应急展 6.16-6.18</span>
+<span class="exh-loc">展位号：广交会展馆 3.1G32</span>
+</div>
 </div>
 
 <div class="main-grid">
@@ -413,7 +424,8 @@ function doSelect() {
     html += `<div style="text-align:center;color:#667788;font-size:0.85em;margin-top:8px">共 ${candidates.length} 个匹配型号，显示前 6 个</div>`;
   }
 
-  resultEl.innerHTML = html + '<div class="action-bar"><button class="btn btn-quote" onclick="getQuote()">获取详细报价与方案</button><button class="btn btn-save" onclick="saveResult()">保存选型结果</button></div>';
+  resultEl.innerHTML = html + '<div class="action-bar"><button class="btn btn-quote" onclick="getQuote()">获取详细报价与方案</button><button class="btn btn-booth" onclick="openBooth()">来展位看实物</button>
+<button class="btn btn-save" onclick="saveResult()">保存选型结果</button></div>';
 
   // 选型分析
   let analysis = '';
@@ -482,6 +494,11 @@ function getQuote() {
   setTimeout(() => { window.location.href = 'tel:15968662709'; }, 500);
 }
 
+// ====== 来展位看实物 ======
+function openBooth() {
+  alert('欢迎光临广州应急展！\n\n创美机电展位：广交会展馆 3.1G32\n展览时间：6月16日-18日\n\n现场可亲身体验应急排涝泵实物，一对一技术交流！');
+}
+
 // ====== 保存选型结果 ======
 async function saveResult() {
   const resultEl = document.getElementById('resultArea');
@@ -522,6 +539,7 @@ async function saveResult() {
 <div class="company">浙江创美机电有限公司</div>
 <div>地址：浙江省温岭市大溪镇塔岙工业区 &nbsp;|&nbsp; 主营：永磁防汛泵、应急排水泵、接力泵、液压泵、轴流泵、便携式潜水泵</div>
 <div class="contact">咨询热线：15968662709（微信同号）</div>
+<div style="margin-top:6px;color:#ffb74d;font-size:0.8em">广州应急展 6.16-6.18 · 广交会展馆 3.1G32 · 欢迎莅临</div>
 <div style="margin-top:8px;font-size:0.75em;color:#445566">本工具数据基于创美机电官方产品手册，选型结果仅供参考，实际工况请以技术协议为准。</div>
 </div>
 
