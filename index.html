@@ -144,6 +144,14 @@ var _hmt = _hmt || [];
 <div>
 <div class="card">
 <h2>工况参数</h2>
+<div class="preset-bar">
+<button class="preset-btn" onclick="fillPreset('basement')">地下室排水</button>
+<button class="preset-btn" onclick="fillPreset('river')">河道抽排</button>
+<button class="preset-btn" onclick="fillPreset('mine')">矿井排水</button>
+<button class="preset-btn" onclick="fillPreset('fire')">消防供水</button>
+<button class="preset-btn" onclick="fillPreset('emergency')">应急排涝</button>
+<button class="preset-btn" onclick="fillPreset('pit')">建筑基坑</button>
+</div>
 <div class="form-row">
 <div class="form-group" style="flex:1">
 <label>企业名称</label>
@@ -177,12 +185,6 @@ var _hmt = _hmt || [];
 </select></div>
 <div class="form-group"><label>电压要求</label>
 <select id="voltage"><option value="all">不限制</option><option value="220">220V</option><option value="380">380V</option></select></div>
-<div class="preset-bar">
-<button class="preset-btn" onclick="fillPreset('basement')" title="地下室/地下车库排水">地下室排水</button>
-<button class="preset-btn" onclick="fillPreset('river')" title="河道/水库调水排涝">河道抽排</button>
-<button class="preset-btn" onclick="fillPreset('mine')" title="矿井/基坑排水">矿井排水</button>
-<button class="preset-btn" onclick="fillPreset('fire')" title="消防/应急供水">消防供水</button>
-</div>
 <button class="btn" onclick="doSelect()">开始选型</button>
 </div>
 
@@ -424,8 +426,7 @@ function doSelect() {
     html += `<div style="text-align:center;color:#667788;font-size:0.85em;margin-top:8px">共 ${candidates.length} 个匹配型号，显示前 6 个</div>`;
   }
 
-  resultEl.innerHTML = html + '<div class="action-bar"><button class="btn btn-quote" onclick="getQuote()">获取详细报价与方案</button><button class="btn btn-booth" onclick="openBooth()">来展位看实物</button>
-<button class="btn btn-save" onclick="saveResult()">保存选型结果</button></div>';
+  resultEl.innerHTML = html + '<div class="action-bar"><button class="btn btn-quote" onclick="getQuote()">获取详细报价与方案</button><button class="btn btn-booth" onclick="openBooth()">来展位看实物</button><button class="btn btn-save" onclick="saveResult()">保存选型结果</button></div>';
 
   // 选型分析
   let analysis = '';
@@ -464,10 +465,12 @@ updateTotalHead();
 
 // ====== 常见工况快捷填充 ======
 const PRESETS = {
-  basement: {q:200, geoHeight:6, safetyMargin:2, label:'地下室排水', tubeLen:50, tubeDia:100, roughness:0.25, localK:1.5, pumpType:'all'},
-  river:    {q:500, geoHeight:8, safetyMargin:3, label:'河道抽排', tubeLen:100, tubeDia:150, roughness:0.25, localK:2.0, pumpType:'all'},
-  mine:     {q:300, geoHeight:25, safetyMargin:4, label:'矿井排水', tubeLen:80, tubeDia:150, roughness:0.3, localK:2.5, pumpType:'szq_high'},
-  fire:     {q:100, geoHeight:50, safetyMargin:5, label:'消防供水', tubeLen:200, tubeDia:100, roughness:0.2, localK:3.0, pumpType:'szq_high'}
+  basement:  {q:50,  geoHeight:6,  safetyMargin:2, pumpType:'all',       pipeDn:100, pipeLen:30,  pipeMaterial:'0.0015', localK:'1.5'},
+  river:     {q:200, geoHeight:8,  safetyMargin:3, pumpType:'all',       pipeDn:200, pipeLen:50,  pipeMaterial:'0.015',  localK:'1.5'},
+  mine:      {q:100, geoHeight:150,safetyMargin:4, pumpType:'szq_high',  pipeDn:100, pipeLen:200, pipeMaterial:'0.015',  localK:'3.0'},
+  fire:      {q:80,  geoHeight:40, safetyMargin:5, pumpType:'szq_high',  pipeDn:100, pipeLen:100, pipeMaterial:'0.015',  localK:'1.5'},
+  emergency: {q:500, geoHeight:5,  safetyMargin:3, pumpType:'szq_large', pipeDn:300, pipeLen:20,  pipeMaterial:'0.0015', localK:'0.5'},
+  pit:       {q:30,  geoHeight:15, safetyMargin:2, pumpType:'all',       pipeDn:80,  pipeLen:40,  pipeMaterial:'0.0015', localK:'1.5'}
 };
 
 function fillPreset(key) {
@@ -477,9 +480,9 @@ function fillPreset(key) {
   document.getElementById('geoHeight').value = p.geoHeight;
   document.getElementById('safetyMargin').value = p.safetyMargin;
   document.getElementById('pumpType').value = p.pumpType;
-  if (p.tubeLen) document.getElementById('pipeLength').value = p.tubeLen;
-  if (p.tubeDia) document.getElementById('pipeDia').value = p.tubeDia;
-  if (p.roughness != null) document.getElementById('roughness').value = p.roughness;
+  if (p.pipeLen) document.getElementById('pipeLen').value = p.pipeLen;
+  if (p.pipeDn) document.getElementById('pipeDn').value = p.pipeDn;
+  if (p.pipeMaterial != null) document.getElementById('pipeMaterial').value = p.pipeMaterial;
   if (p.localK != null) document.getElementById('localK').value = p.localK;
   updateTotalHead();
 }
