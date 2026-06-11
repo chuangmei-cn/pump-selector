@@ -465,12 +465,12 @@ updateTotalHead();
 
 // ====== 常见工况快捷填充 ======
 const PRESETS = {
-  basement:  {q:500,  geoHeight:5,  safetyMargin:2, pumpType:'all',       pipeDn:250, pipeLen:100, pipeMaterial:'0.1', localK:'0'},
-  river:     {q:800,  geoHeight:6,  safetyMargin:3, pumpType:'all',       pipeDn:300, pipeLen:100, pipeMaterial:'0.1', localK:'0'},
+  basement:  {q:500,  geoHeight:5,  safetyMargin:2, pumpType:'szq_large', pipeDn:250, pipeLen:100, pipeMaterial:'0.1', localK:'0'},
+  river:     {q:800,  geoHeight:6,  safetyMargin:3, pumpType:'szq_large', pipeDn:300, pipeLen:100, pipeMaterial:'0.1', localK:'0'},
   mine:      {q:100,  geoHeight:50, safetyMargin:4, pumpType:'szq_high',  pipeDn:100, pipeLen:150, pipeMaterial:'0.1', localK:'0'},
   fire:      {q:200,  geoHeight:50, safetyMargin:5, pumpType:'szq_high',  pipeDn:150, pipeLen:200, pipeMaterial:'0.1', localK:'0'},
-  emergency: {q:1000, geoHeight:5,  safetyMargin:3, pumpType:'szq_large', pipeDn:300, pipeLen:100, pipeMaterial:'0.1', localK:'0'},
-  pit:       {q:500,  geoHeight:6,  safetyMargin:2, pumpType:'all',       pipeDn:250, pipeLen:150, pipeMaterial:'0.1', localK:'0'}
+  emergency: {q:1000, geoHeight:5,  safetyMargin:3, pumpType:'yzq',       pipeDn:300, pipeLen:100, pipeMaterial:'0.1', localK:'0'},
+  pit:       {q:500,  geoHeight:6,  safetyMargin:2, pumpType:'szq_large', pipeDn:250, pipeLen:150, pipeMaterial:'0.1', localK:'0'}
 };
 
 function fillPreset(key) {
