@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>if(location.protocol!=="https:"&&location.hostname!=="localhost"&&!location.hostname.match(/^127\./)){location.replace("https://"+location.hostname+location.pathname+location.search)}</script>
+<meta name="robots" content="index, follow">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <meta name="description" content="创美水泵智能选型工具 - 输入流量、扬程等工况参数，一键匹配最优防汛泵型号。内置229款产品数据库，支持达西-魏斯巴赫管损计算。浙江创美机电有限公司官方选型平台。">
 <meta name="keywords" content="防汛泵,水泵选型,排水泵,防汛泵车,轴流泵,接力泵,管损计算,创美机电">
@@ -134,8 +136,8 @@ var _hmt = _hmt || [];
 <p class="sub">输入工况参数，一键匹配最优泵型 | 含管损计算</p>
 <div class="brand-tag">浙江创美机电有限公司 · 官方产品数据库</div>
 <div class="exhibition-bar">
-<span class="exh-badge">广州应急展 6.16-6.18</span>
-<span class="exh-loc">展位号：广交会展馆 3.1G32</span>
+<span class="exh-badge" style="background:rgba(255,255,255,0.1);color:#8899bb">往期展会</span>
+<span class="exh-loc">广州应急展 6.16-6.18 · 广交会展馆 3.1G32（已结束，欢迎来电咨询）</span>
 </div>
 </div>
 
@@ -323,6 +325,11 @@ function doSelect() {
   const resultEl = document.getElementById('resultArea');
   const analysisEl = document.getElementById('analysisArea');
 
+  // 表单验证
+  if (phone && !/^1\d{10}$/.test(phone)) {
+    alert('请输入正确的11位手机号');
+    return;
+  }
   // PushPlus 线索推送
   if (company || phone) {
     const pushData = {
@@ -491,10 +498,11 @@ function fillPreset(key) {
 function getQuote() {
   const best = document.querySelector('.result-card');
   const model = best ? best.querySelector('h3').textContent.replace('★ ','').trim() : '';
-  const msg = '您好，我对创美水泵型号 ' + model + ' 感兴趣，请提供详细报价与方案。';
-  window.open('https://work.weixin.qq.com/kfid/kfc6b8cd576f2e9f9b7', '_blank');
-  // 同时尝试拨号
-  setTimeout(() => { window.location.href = 'tel:15968662709'; }, 500);
+  if (confirm('请选择联系方式：\n点击「确定」打开企业微信客服\n点击「取消」直接拨打咨询热线')) {
+    window.open('https://work.weixin.qq.com/kfid/kfc6b8cd576f2e9f9b7', '_blank');
+  } else {
+    var _p = ['159','6866','2709']; window.location.href = 'tel:' + _p.join('');
+  }
 }
 
 // ====== 来展位看实物 ======
@@ -541,7 +549,7 @@ async function saveResult() {
 <div class="footer">
 <div class="company">浙江创美机电有限公司</div>
 <div>地址：浙江省温岭市大溪镇塔岙工业区 &nbsp;|&nbsp; 主营：永磁防汛泵、应急排水泵、接力泵、液压泵、轴流泵、便携式潜水泵</div>
-<div class="contact">咨询热线：15968662709（微信同号）</div>
+<div class="contact">咨询热线：<span id="phoneDisplay"></span>（微信同号）</div>
 <div style="margin-top:6px;color:#ffb74d;font-size:0.8em">广州应急展 6.16-6.18 · 广交会展馆 3.1G32 · 欢迎莅临</div>
 <div style="margin-top:8px;font-size:0.75em;color:#445566">本工具数据基于创美机电官方产品手册，选型结果仅供参考，实际工况请以技术协议为准。</div>
 </div>
@@ -556,7 +564,8 @@ async function saveResult() {
   "areaServed": "CN",
   "knowsAbout": ["永磁防汛泵","应急排水泵","接力泵","液压泵","轴流泵","便携式潜水泵"]
 }
-</script>
+
+document.getElementById('phoneDisplay').textContent = ['159','6866','2709'].join('');</script>
 
 </body>
 </html>
